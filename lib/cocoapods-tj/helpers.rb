@@ -1,0 +1,5 @@
+require 'cocoapods-tj/helpers/sources_helper'
+require 'cocoapods-tj/helpers/spec_creator'
+require 'cocoapods-tj/helpers/spec_files_helper'
+require 'cocoapods-tj/helpers/spec_source_creator'
+require 'cocoapods-tj/helpers/build_utils'
