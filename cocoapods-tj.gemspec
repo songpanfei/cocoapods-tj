@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'cocoapods-tj'
   spec.version       = CBin::VERSION
   spec.authors       = ['song']
-  spec.email         = ['song@song.com']
+  spec.email         = ['1173742025@qq.com']
   spec.description   = %q{}
   spec.summary       = %q{}
   spec.homepage      = 'https://github.com/songpanfei/cocoapods-tj'
