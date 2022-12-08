@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['song@song.com']
   spec.description   = %q{}
   spec.summary       = %q{}
-  spec.homepage      = 'https://github.com/songpanfei/cocaopods-tj'
+  spec.homepage      = 'https://github.com/songpanfei/cocoapods-tj'
   spec.license       = 'MIT'
 
   spec.files = Dir["lib/**/*.rb","spec/**/*.rb","lib/**/*.plist"] + %w{README.md LICENSE.txt }
