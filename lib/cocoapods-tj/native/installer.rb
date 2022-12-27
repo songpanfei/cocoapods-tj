@@ -3,6 +3,8 @@
 require 'parallel'
 require 'cocoapods'
 require 'cocoapods-tj/native/pod_source_installer'
+require 'fileutils'
+require 'cocoapods-tj/config/config_builder'
 
 module Pod
   class Installer
@@ -11,6 +13,13 @@ module Pod
       installer = old_create_pod_installer(pod_name)
       installer.installation_options = installation_options
       installer
+    end
+
+    alias old_perform_post_install_actions perform_post_install_actions
+    def perform_post_install_actions
+      old_perform_post_install_actions
+      buildTemp = CBin::Config::Builder.instance.root_dir
+      buildTemp.rmtree if buildTemp&.exist?
     end
 
     alias old_install_pod_sources install_pod_sources
@@ -41,13 +50,15 @@ module Pod
           else
             title = "Installing #{spec}"
           end
-          UI.titled_section(title.green, title_options) do
-            install_source_of_pod(spec.name)
-          end
+          # UI.titled_section(title.green, title_options) do
+          #
+          # end
+          install_source_of_pod(spec.name)
         else
-          UI.titled_section("Using #{spec}", title_options) do
-            create_pod_installer(spec.name)
-          end
+          create_pod_installer(spec.name)
+          # UI.titled_section("Using #{spec}", title_options) do
+          #
+          # end
         end
       end
     end
