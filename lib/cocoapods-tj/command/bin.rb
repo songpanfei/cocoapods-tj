@@ -8,7 +8,7 @@ require 'cocoapods-tj/command/bin/local'
 require 'cocoapods-tj/command/bin/update'
 require 'cocoapods-tj/command/bin/install'
 require 'cocoapods-tj/command/bin/imy'
-
+require 'cocoapods-tj/command/bin/spec/create'
 require 'cocoapods-tj/helpers'
 
 module Pod

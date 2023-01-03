@@ -14,12 +14,14 @@ module Pod
             [
               ['--platforms=ios', '生成二进制 spec 支持的平台'],
               ['--template-podspec=A.binary-template.podspec', '生成拥有 subspec 的二进制 spec 需要的模版 podspec, 插件会更改 version 和 source'],
-              ['--no-overwrite', '不允许覆盖']
+              ['--no-overwrite', '不允许覆盖'],
+              ['--binary_source', '生成的二进制podspec的source地址']
             ].concat(super)
           end
 
           def initialize(argv)
             @platforms = argv.option('platforms', 'ios')
+            @binary_source = argv.option('binary_source', '')
             @allow_overwrite = argv.flag?('overwrite', true)
             @template_podspec = argv.option('template-podspec')
             @podspec = argv.shift_argument
@@ -34,7 +36,7 @@ module Pod
 
             if binary_spec && !@allow_overwrite
             else
-              spec_file = create_binary_spec_file(code_spec, template_spec)
+              spec_file = create_binary_spec_file(code_spec,@binary_source, template_spec)
             end
           end
 

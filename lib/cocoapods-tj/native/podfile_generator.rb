@@ -11,7 +11,7 @@ require 'cocoapods'
 module Pod
   module Generate
     class PodfileGenerator
-      alias old_podfile_for_spec podfile_for_spec
+      # alias old_podfile_for_spec podfile_for_spec
 
       def podfile_for_spec(spec)
         generator = self

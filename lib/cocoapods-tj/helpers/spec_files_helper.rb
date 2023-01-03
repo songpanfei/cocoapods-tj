@@ -14,7 +14,7 @@ module CBin
     end
 
     def binary_template_spec_files
-      @binary_spec_template_files ||= Pathname.glob('*.binary-template.podspec{,.json}')
+      @binary_spec_template_files ||= Pathname.glob('*.template.podspec{,.json}')
     end
 
     def binary_template_spec_file
@@ -50,7 +50,7 @@ module CBin
       path
     end
 
-    def create_binary_spec_file(code_spec, template_spec)
+    def create_binary_spec_file(code_spec,binary_source,template_spec)
 
 
       unless code_spec
@@ -60,7 +60,7 @@ module CBin
         raise Pod::Informative, '拥有 subspec 的组件，在生成二进制 podspec 时，必须要提供模版 podspec.'
      end
 
-      @spec_creator = CBin::Specification::Creator.new(code_spec, template_spec)
+      @spec_creator = CBin::Specification::Creator.new(code_spec, binary_source , template_spec)
       @spec_creator.create
       @spec_creator.write_spec_file
       @spec_creator.filename

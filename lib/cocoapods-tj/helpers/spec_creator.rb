@@ -7,11 +7,13 @@ module CBin
   class Specification
     class Creator
       attr_reader :code_spec
+      attr_reader :binary_source #二进制仓库地址
       attr_reader :template_spec
       attr_reader :spec
 
-      def initialize(code_spec, template_spec, platforms = 'ios')
+      def initialize(code_spec, binary_source, template_spec, platforms = 'ios')
         @code_spec = code_spec
+        @binary_source = binary_source
         @template_spec = template_spec
         @platforms = Array(platforms)
         validate!
@@ -50,7 +52,7 @@ module CBin
       end
 
       def filename
-        @filename ||= "#{spec.name}.binary.podspec.json"
+        @filename ||= "#{spec.name}.podspec.json"
       end
 
       private
@@ -67,7 +69,7 @@ module CBin
           extnames += code_spec_consumer.resources.map { |r| File.basename(r) }
         end
         if extnames.any?
-          @spec.resources = framework_contents('Resources').flat_map { |r| extnames.map { |e| "#{r}/#{e}" } }
+          @spec.resources = framework_contents_root().flat_map { |r| extnames.map { |e| "#{r}/#{e}" } }
         end
 
         # Source Location
@@ -85,7 +87,7 @@ module CBin
         spec_hash.delete('preserve_paths')
 
         spec_hash.delete('vendored_libraries')
-        spec_hash['vendored_libraries'] = binary_vendored_libraries
+        # spec_hash['vendored_libraries'] = binary_vendored_libraries
 
 
         platforms = spec_hash['platforms']
@@ -104,7 +106,7 @@ module CBin
 
         @spec.source_files = binary_source_files
         @spec.public_header_files = binary_public_header_files
-        @spec.vendored_libraries = binary_vendored_libraries
+        # @spec.vendored_libraries = binary_vendored_libraries
 
         @spec.resources = binary_resources if @spec.attributes_hash.keys.include?("resources")
 
@@ -114,7 +116,7 @@ module CBin
       end
 
       def binary_source
-        { http: format(CBin.config.binary_download_url, code_spec.root.name, code_spec.version), type: CBin.config.download_file_type }
+        { git: @binary_source, tag:code_spec.version  }
       end
 
       def code_spec_consumer(_platform = :ios)
@@ -123,6 +125,10 @@ module CBin
 
       def framework_contents(name)
         ["#{code_spec.root.name}.framework", "#{code_spec.root.name}.framework/Versions/A"].map { |path| "#{path}/#{name}" }
+      end
+
+      def framework_contents_root()
+        ["#{code_spec.root.name}.framework", "#{code_spec.root.name}.framework/Versions/A"]
       end
 
       def binary_source_files
