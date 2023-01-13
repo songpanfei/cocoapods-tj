@@ -11,7 +11,8 @@ module Pod
     alias old_create_pod_installer create_pod_installer
     def create_pod_installer(pod_name)
       installer = old_create_pod_installer(pod_name)
-      installer.installation_options = installation_options
+      #报错，暂时先注释掉
+      # installer.installation_options = installation_options
       installer
     end
 
