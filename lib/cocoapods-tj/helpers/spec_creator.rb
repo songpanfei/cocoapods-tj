@@ -76,8 +76,8 @@ module CBin
         @spec.source = binary_source
 
         # Source Code
-        @spec.source_files = framework_contents('Headers/*')
-        @spec.public_header_files = framework_contents('Headers/*')
+        @spec.source_files = '*.h'
+        @spec.public_header_files = '*.h'
 
         # Unused for binary
         spec_hash = @spec.to_hash
@@ -124,11 +124,11 @@ module CBin
       end
 
       def framework_contents(name)
-        ["#{code_spec.root.name}.framework", "#{code_spec.root.name}.framework/Versions/A"].map { |path| "#{path}/#{name}" }
+        ["#{code_spec.root.name}.framework"].map { |path| "#{path}/#{name}" }
       end
 
       def framework_contents_root()
-        ["#{code_spec.root.name}.framework", "#{code_spec.root.name}.framework/Versions/A"]
+        ["#{code_spec.root.name}.framework"]
       end
 
       def binary_source_files
@@ -136,11 +136,11 @@ module CBin
       end
 
       def binary_source_files
-        "bin_#{code_spec.name}_#{code_spec.version}/Headers/*"
+        "bin_#{code_spec.name}_#{code_spec.version}/*"
       end
 
       def binary_public_header_files
-        "bin_#{code_spec.name}_#{code_spec.version}/Headers/*.h"
+        "bin_#{code_spec.name}_#{code_spec.version}/*.h"
       end
 
       def binary_vendored_libraries
