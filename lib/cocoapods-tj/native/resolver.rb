@@ -141,6 +141,7 @@ module Pod
               rspec
 
             end
+            rspec
 
 
           end.compact
