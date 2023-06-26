@@ -80,9 +80,6 @@ module Pod
       end
     end
 
-    # >= 1.4.0 才有 resolver_specs_by_target 以及 ResolverSpecification
-    # >= 1.5.0 ResolverSpecification 才有 source，供 install 或者其他操作时，输入 source 变更
-    #
     if Pod.match_version?('~> 1.4')
       old_resolver_specs_by_target = instance_method(:resolver_specs_by_target)
       define_method(:resolver_specs_by_target) do
@@ -103,27 +100,28 @@ module Pod
                               end
 
           specs_by_target[target] = rspecs.map do |rspec|
+            sepc_path = rspec.spec.defined_in_file.dirname.to_s
+            if !sepc_path.include?("Pods/Local")
 
+              use_binary = use_binary_rspecs.include?(rspec)
+              source = use_binary ? sources_manager.binary_source : sources_manager.code_source
 
-            use_binary = use_binary_rspecs.include?(rspec)
-            source = use_binary ? sources_manager.binary_source : sources_manager.code_source
+              spec_version = rspec.spec.version
 
-            spec_version = rspec.spec.version
+              begin
+                specification = source.specification(rspec.root.name, spec_version)
+                UI.message "#{rspec.root.name} #{spec_version} \r\n specification =#{specification} "
+                if rspec.spec.subspec?
+                  specification = specification.subspec_by_name(rspec.name, false, true)
+                end
 
-            begin
-              specification = source.specification(rspec.root.name, spec_version)
-              UI.message "#{rspec.root.name} #{spec_version} \r\n specification =#{specification} "
-              if rspec.spec.subspec?
-                specification = specification.subspec_by_name(rspec.name, false, true)
-              end
+                next unless specification
 
-              next unless specification
-
-              used_by_only = if Pod.match_version?('~> 1.7')
-                               rspec.used_by_non_library_targets_only
-                             else
-                               rspec.used_by_tests_only
-                             end
+                used_by_only = if Pod.match_version?('~> 1.7')
+                                 rspec.used_by_non_library_targets_only
+                               else
+                                 rspec.used_by_tests_only
+                               end
 
                 rspec = if Pod.match_version?('~> 1.4.0')
                           ResolverSpecification.new(specification, used_by_only)
@@ -131,17 +129,22 @@ module Pod
                           ResolverSpecification.new(specification, used_by_only, source)
                         end
 
-              # end
+                # end
 
-            rescue Pod::StandardError => e
+              rescue Pod::StandardError => e
 
-              # missing_binary_specs << rspec.spec if use_binary
-              missing_binary_specs << rspec.spec
+                # missing_binary_specs << rspec.spec if use_binary
+                missing_binary_specs << rspec.spec
+                rspec
+              end
+
               rspec
+
             end
 
-            rspec
+
           end.compact
+          print ""
         end
 
         if missing_binary_specs.any?
